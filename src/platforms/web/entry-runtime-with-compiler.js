@@ -14,11 +14,14 @@ const idToTemplate = cached(id => {
   return el && el.innerHTML
 })
 
+// 先保存之前通用的 $mount 方法，定义在 src/platform/web/runtime/index.js
+// 此处定义的是针对于 entry-runtime-with-compiler 的 $mount方法
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
 ): Component {
+  // el 可以传入字符串或者DOM对象
   el = el && query(el)
 
   /* istanbul ignore if */
@@ -31,11 +34,16 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
+  // 生成 render 函数
   if (!options.render) {
     let template = options.template
     if (template) {
       if (typeof template === 'string') {
+        // Vue.component('anchored-heading', {
+        //   template: '#anchored-heading-template',
+        // })
         if (template.charAt(0) === '#') {
+          // 会寻找template的内容
           template = idToTemplate(template)
           /* istanbul ignore if */
           if (process.env.NODE_ENV !== 'production' && !template) {
@@ -57,11 +65,12 @@ Vue.prototype.$mount = function (
       template = getOuterHTML(el)
     }
     if (template) {
+      // 此时，template为字符串
       /* istanbul ignore if */
       if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
         mark('compile')
       }
-
+      // 生成 render 函数
       const { render, staticRenderFns } = compileToFunctions(template, {
         shouldDecodeNewlines,
         shouldDecodeNewlinesForHref,
