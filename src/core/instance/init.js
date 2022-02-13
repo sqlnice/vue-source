@@ -13,9 +13,11 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 let uid = 0
 
 export function initMixin (Vue: Class<Component>) {
+  // 给Vue的原型prototype添加 _init方法，在new Vue初始化实例时调用
   Vue.prototype._init = function (options?: Object) {
+    // this指实例本身
     const vm: Component = this
-    // a uid
+    // a uid 防止多个Vue实例冲突
     vm._uid = uid++
 
     let startTag, endTag
@@ -28,7 +30,7 @@ export function initMixin (Vue: Class<Component>) {
 
     // a flag to avoid this being observed
     vm._isVue = true
-    // merge options
+    // 合并配置
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
@@ -49,11 +51,16 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
+    // 初始化生命周期
     initLifecycle(vm)
+    // 初始化事件中心
     initEvents(vm)
+    // 初始化渲染
     initRender(vm)
     callHook(vm, 'beforeCreate')
+    // 初始化注入
     initInjections(vm) // resolve injections before data/props
+    // 初始化data、props、methods、computed、watch
     initState(vm)
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')
@@ -64,7 +71,11 @@ export function initMixin (Vue: Class<Component>) {
       mark(endTag)
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
-
+    // 执行到如果，如果有
+    // new Vue({
+    //   el: "#app",
+    // });
+    // 则调用$mount 挂载vm，挂载的目标就是把模板渲染成最终的DOM
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }

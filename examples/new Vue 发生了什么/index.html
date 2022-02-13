@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>new Vue 发生了什么</title>
+    <script src="../../dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">{{message}}</div>
+
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          message: "new Vue 发生了什么",
+        },
+      });
+    </script>
+  </body>
+</html>
