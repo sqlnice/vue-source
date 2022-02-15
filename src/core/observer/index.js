@@ -34,6 +34,7 @@ export function toggleObserving (value: boolean) {
  * object's property keys into getter/setters that
  * collect dependencies and dispatch updates.
  */
+// 观察者类附加到每个被观察的对象。一旦附加上，观察者就会将目标对象的属性键转换成getter/setter，用来收集依赖项和分发更新。
 export class Observer {
   value: any;
   dep: Dep;
@@ -43,8 +44,10 @@ export class Observer {
     this.value = value
     this.dep = new Dep()
     this.vmCount = 0
+    // 给value值设置 __ob__ ，值为本身
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
+      // 重写数组的方法
       const augment = hasProto
         ? protoAugment
         : copyAugment
@@ -60,6 +63,7 @@ export class Observer {
    * getter/setters. This method should only be called when
    * value type is Object.
    */
+  // 遍历每个属性，设置响应式
   walk (obj: Object) {
     const keys = Object.keys(obj)
     for (let i = 0; i < keys.length; i++) {
@@ -70,6 +74,7 @@ export class Observer {
   /**
    * Observe a list of Array items.
    */
+  // 遍历数组，为数组每一项设置观察，处理数组元素为对象的情况
   observeArray (items: Array<any>) {
     for (let i = 0, l = items.length; i < l; i++) {
       observe(items[i])
@@ -107,10 +112,14 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * or the existing observer if the value already has one.
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
+  // 如果不是对象或是 VNode 实例，则不处理，直接退出
   if (!isObject(value) || value instanceof VNode) {
     return
   }
   let ob: Observer | void
+
+  // 判重，如果 value 对象存在 __ob__ 属性，标识已经给 vlaue 创建过了，直接返回 __ob__ 属性
+  // 从这里能看出，为一个 value 创建观察者对象成功就会给 value 添加 __ob__ 属性，值就是观察者实例本身
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (
@@ -120,6 +129,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
+    // 创建观察者实例
     ob = new Observer(value)
   }
   if (asRootData && ob) {
@@ -138,8 +148,11 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
+  // 实例化 dep，一个 key 一个 dep，当然这里是 initProp 调用的，key 是 propOptions 中的属性
+  // 如果 prop 对应的值是个也是对象，则后面 observe 的时候也会为子对象的 key 创建的
   const dep = new Dep()
 
+  // 获取 obj[key] 的原有的属性描述对象，若不可配置的话直接 return
   const property = Object.getOwnPropertyDescriptor(obj, key)
   if (property && property.configurable === false) {
     return
@@ -151,15 +164,18 @@ export function defineReactive (
   if ((!getter || setter) && arguments.length === 2) {
     val = obj[key]
   }
-
+  // 借助 observe 递归处理子属性
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
+      // 取值
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
+        // 依赖收集
         dep.depend()
+        // 子对象
         if (childOb) {
           childOb.dep.depend()
           if (Array.isArray(value)) {
@@ -184,7 +200,9 @@ export function defineReactive (
       } else {
         val = newVal
       }
+      // 递归处理子对象
       childOb = !shallow && observe(newVal)
+      // 派发更新
       dep.notify()
     }
   })

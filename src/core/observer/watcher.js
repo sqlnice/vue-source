@@ -167,6 +167,9 @@ export default class Watcher {
   update () {
     /* istanbul ignore else */
     if (this.computed) {
+      // 懒执行时走这里，比如 computed
+      // 将 dirty 置为 true，就可以让 computedGetter 执行时重新计算 computed 回调函数的执行结果
+
       // A computed property watcher has two modes: lazy and activated.
       // It initializes as lazy by default, and only becomes activated when
       // it is depended on by at least one subscriber, which is typically
@@ -185,8 +188,10 @@ export default class Watcher {
         })
       }
     } else if (this.sync) {
+      // 在使用 $watch 或者 watch 选项时，可以传入一个 sync 选项，标识 watcher 需要同步更新
       this.run()
     } else {
+      // 一般的 watcher 更新都是异步队列，将 watcher 放入到更新对象队列
       queueWatcher(this)
     }
   }

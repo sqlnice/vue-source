@@ -66,14 +66,17 @@ function initProps (vm: Component, propsOptions: Object) {
   const props = vm._props = {}
   // cache prop keys so that future props updates can iterate using Array
   // instead of dynamic object key enumeration.
+  // 缓存 propsOptions 中的 key
   const keys = vm.$options._propKeys = []
   const isRoot = !vm.$parent
   // root instance props should be converted
   if (!isRoot) {
     toggleObserving(false)
   }
+  // 遍历 props 对象
   for (const key in propsOptions) {
     keys.push(key)
+    // 获取 key 对应的值 value
     const value = validateProp(key, propsOptions, propsData, vm)
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
@@ -97,6 +100,7 @@ function initProps (vm: Component, propsOptions: Object) {
         }
       })
     } else {
+      // 为 props 的每个 key 设置数据响应式
       defineReactive(props, key, value)
     }
     // static props are already proxied on the component's prototype
@@ -144,10 +148,12 @@ function initData (vm: Component) {
         vm
       )
     } else if (!isReserved(key)) {
+      // 代理属性到 vm 上
       proxy(vm, `_data`, key)
     }
   }
   // observe data
+  // 调用 observe 为 data 对象上的数据设置响应式
   observe(data, true /* asRootData */)
 }
 
@@ -167,6 +173,7 @@ export function getData (data: Function, vm: Component): any {
 const computedWatcherOptions = { computed: true }
 
 function initComputed (vm: Component, computed: Object) {
+  // 注意这个 vm._computedWatchers 对象，后面的 createComputedGetter 方法中要用到了
   // $flow-disable-line
   const watchers = vm._computedWatchers = Object.create(null)
   // computed properties are just getters during SSR
@@ -184,6 +191,7 @@ function initComputed (vm: Component, computed: Object) {
 
     if (!isSSR) {
       // create internal watcher for the computed property.
+      // 为每一个key创建Watcher实例
       watchers[key] = new Watcher(
         vm,
         getter || noop,
@@ -196,6 +204,7 @@ function initComputed (vm: Component, computed: Object) {
     // component prototype. We only need to define computed properties defined
     // at instantiation here.
     if (!(key in vm)) {
+      // 将每个key代理到 vm 上
       defineComputed(vm, key, userDef)
     } else if (process.env.NODE_ENV !== 'production') {
       if (key in vm.$data) {
@@ -242,9 +251,11 @@ export function defineComputed (
 
 function createComputedGetter (key) {
   return function computedGetter () {
+    // this._computedWatchers 是在上面 initComputed 的时候添加到 vm 实例上的
     const watcher = this._computedWatchers && this._computedWatchers[key]
     if (watcher) {
       watcher.depend()
+      // 调用 watcher.evaluate 就是求值，求 watcher 接收到的 expOrFn 的值
       return watcher.evaluate()
     }
   }
@@ -274,6 +285,7 @@ function initMethods (vm: Component, methods: Object) {
         )
       }
     }
+    // 改变this指向
     vm[key] = methods[key] == null ? noop : bind(methods[key], vm)
   }
 }

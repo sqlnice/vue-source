@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>initState</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <button @click="msgChange">改变msg</button>
+    <span>msg:{{msg}}</span>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        msg: 'hello vue'
+      },
+      props: {
+        someProp: {
+          type: String,
+          default: function () { return 'somePropDefaultVal' }
+        }
+      },
+      computed: {
+        someComputed() {
+          return this.msg + this.someProp
+        }
+      },
+      watch: {
+        msg: [
+          (newVal, oldVal) => {
+            console.log(newVal, oldVal)
+          },
+          (newVal, oldVal) => {
+            console.log(newVal, oldVal)
+          },
+        ]
+      },
+      methods: {
+        msgChange() {
+          this.msg = 'new msg'
+        }
+      }
+    })
+
+  </script>
+</body>
+
+</html>

@@ -28,6 +28,7 @@ export function validateProp (
   const absent = !hasOwn(propsData, key)
   let value = propsData[key]
   // boolean casting
+  // 处理类型为 Boolean 的默认值
   const booleanIndex = getTypeIndex(Boolean, prop.type)
   if (booleanIndex > -1) {
     if (absent && !hasOwn(prop, 'default')) {
@@ -42,12 +43,14 @@ export function validateProp (
     }
   }
   // check default value
+  // 检查、设置默认值
   if (value === undefined) {
     value = getPropDefaultValue(vm, prop, key)
     // since the default value is a fresh copy,
     // make sure to observe it.
     const prevShouldObserve = shouldObserve
     toggleObserving(true)
+    // 给默认值设置响应式
     observe(value)
     toggleObserving(prevShouldObserve)
   }

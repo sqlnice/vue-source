@@ -26,6 +26,7 @@ methodsToPatch.forEach(function (method) {
   const original = arrayProto[method]
   def(arrayMethods, method, function mutator (...args) {
     const result = original.apply(this, args)
+    // __ob__ 即为 Observer 实例本身
     const ob = this.__ob__
     let inserted
     switch (method) {
@@ -39,6 +40,7 @@ methodsToPatch.forEach(function (method) {
     }
     if (inserted) ob.observeArray(inserted)
     // notify change
+    // 派发更新
     ob.dep.notify()
     return result
   })
