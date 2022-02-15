@@ -14,9 +14,11 @@ export function initProvide (vm: Component) {
 }
 
 export function initInjections (vm: Component) {
+  // 得到 result[key] = val 结构
   const result = resolveInject(vm.$options.inject, vm)
   if (result) {
     toggleObserving(false)
+    // 对 result 做响应式处理，也有代理 inject 配置中每个 key 到 vm 实例的作用；
     Object.keys(result).forEach(key => {
       /* istanbul ignore else */
       if (process.env.NODE_ENV !== 'production') {
@@ -51,9 +53,11 @@ export function resolveInject (inject: any, vm: Component): ?Object {
       const key = keys[i]
       const provideKey = inject[key].from
       let source = vm
+      // 循环找父元素的 _provided
       while (source) {
         if (source._provided && hasOwn(source._provided, provideKey)) {
           result[key] = source._provided[provideKey]
+          // 找到最近的就终止
           break
         }
         source = source.$parent

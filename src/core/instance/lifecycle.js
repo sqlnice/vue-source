@@ -34,6 +34,7 @@ export function initLifecycle (vm: Component) {
   }
 
   vm.$parent = parent
+  // 如果没有 parent 说自己就是 $root
   vm.$root = parent ? parent.$root : vm
 
   vm.$children = []
@@ -327,6 +328,9 @@ export function callHook (vm: Component, hook: string) {
       }
     }
   }
+  // vm._hasHookEvent 是标识有没有 hook event 的，这个值是哪里处理的呢？
+  // 是处理事件监听的 vm.$on方法处理的
+  // vm._hasHookEvent = /^hook:/g.test(eventName)
   if (vm._hasHookEvent) {
     vm.$emit('hook:' + hook)
   }

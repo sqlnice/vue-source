@@ -28,7 +28,7 @@ export function initMixin (Vue: Class<Component>) {
       mark(startTag)
     }
 
-    // a flag to avoid this being observed
+    // 标识符，防止被数据观察处理
     vm._isVue = true
     // 合并配置
     if (options && options._isComponent) {
@@ -37,6 +37,7 @@ export function initMixin (Vue: Class<Component>) {
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
+      // 得到 Vue.otpions 对象
       vm.$options = mergeOptions(
         resolveConstructorOptions(vm.constructor),
         options || {},
@@ -45,24 +46,42 @@ export function initMixin (Vue: Class<Component>) {
     }
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
+      // 设置代理，将 vm 实例上的属性代理到 vm._renderProxy，用 ES6 的 Proxy 实现的
       initProxy(vm)
     } else {
       vm._renderProxy = vm
     }
     // expose real self
     vm._self = vm
-    // 初始化生命周期
+    // 初始化实例上的一些关键属性，如_inactive/_isMounted/_isDestroyed
+    // 组件上的关系，如$parent/$root/$children/$refs
     initLifecycle(vm)
-    // 初始化事件中心
+
+    // 初始化自定义事件
     initEvents(vm)
-    // 初始化渲染
+
+    // 初始化渲染需要用到的重要方法：vm.$createElement
     initRender(vm)
+
+    // 调用 beforeCreate 生命周期钩子
     callHook(vm, 'beforeCreate')
-    // 初始化注入
+
+    // 初始化组件上的 inject 选项，把这个东西处理成 result[key] = val 的标准形式，
+    // 然后对这个 result 做数据响应式处理，代理每个 key 到 vm
     initInjections(vm) // resolve injections before data/props
-    // 初始化data、props、methods、computed、watch
+
+    // 处理数据响应式的重点，初始化data、props、methods、computed、watch
     initState(vm)
+
+    // 解析组件上的 provide，这个 provide 有点像 react 的 Provider，是跨组件深层传递数据的
+    // 同样，把解析结果代理到 vm._provide 上；
+    // 这里多说一点，为啥先初始化 initInjections 后初始化 initProvide 呢？
+    // 他之所以敢这么干是因为 inject 在子组件上，而 provide 在父组件上，而父组件先于子组件被
+    // 处理所以当 inject 后初始化没问题，因为他取用的是父组件上的 provide，
+    // 此时父组件的 provide 早已经初始化完成了
     initProvide(vm) // resolve provide after data/props
+
+    // 调用 created 生命周期钩子
     callHook(vm, 'created')
 
     /* istanbul ignore if */

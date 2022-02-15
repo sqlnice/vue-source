@@ -370,11 +370,10 @@ export function mergeOptions (
   if (process.env.NODE_ENV !== 'production') {
     checkComponents(child)
   }
-
   if (typeof child === 'function') {
     child = child.options
   }
-
+  // 标准化 props、inject、directive 选项
   normalizeProps(child, vm)
   normalizeInject(child, vm)
   normalizeDirectives(child)
@@ -397,8 +396,11 @@ export function mergeOptions (
       mergeField(key)
     }
   }
+  // 合并字段，child 选项将覆盖子选项
   function mergeField (key) {
+    // strats 或者 defaultStrat 是个合并策略，即到底用父的还是用子的
     const strat = strats[key] || defaultStrat
+    // 优先使用 child 子选项的值
     options[key] = strat(parent[key], child[key], vm, key)
   }
   return options
