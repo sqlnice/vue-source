@@ -80,6 +80,7 @@ export function renderMixin (Vue: Class<Component>) {
     // render self
     let vnode
     try {
+      // 主要执行此方法
       vnode = render.call(vm._renderProxy, vm.$createElement)
     } catch (e) {
       handleError(e, vm, `render`)
@@ -101,7 +102,7 @@ export function renderMixin (Vue: Class<Component>) {
         vnode = vm._vnode
       }
     }
-    // return empty vnode in case the render function errored out
+    // 生成空的vnode进行兜底
     if (!(vnode instanceof VNode)) {
       if (process.env.NODE_ENV !== 'production' && Array.isArray(vnode)) {
         warn(
