@@ -8,10 +8,7 @@
 </head>
 
 <body>
-  <div id="app">
-    <button @click="msgChange">改变msg</button>
-    <span>msg:{{msg}}</span>
-  </div>
+  <div id="app"></div>
 
   <script>
     new Vue({
@@ -19,32 +16,35 @@
       data: {
         msg: 'hello vue'
       },
-      props: {
-        someProp: {
-          type: String,
-          default: function () { return 'somePropDefaultVal' }
-        }
-      },
-      computed: {
-        someComputed() {
-          return this.msg + this.someProp
-        }
-      },
-      watch: {
-        msg: [
-          (newVal, oldVal) => {
-            console.log(newVal, oldVal)
-          },
-          (newVal, oldVal) => {
-            console.log(newVal, oldVal)
-          },
-        ]
-      },
-      methods: {
-        msgChange() {
-          this.msg = 'new msg'
-        }
+      render(createElement) {
+        return createElement('h1', [createElement('a', ['a', true])])
       }
+      // props: {
+      //   someProp: {
+      //     type: String,
+      //     default: function () { return 'somePropDefaultVal' }
+      //   }
+      // },
+      // computed: {
+      //   someComputed() {
+      //     return this.msg + this.someProp
+      //   }
+      // },
+      // watch: {
+      //   msg: [
+      //     (newVal, oldVal) => {
+      //       console.log(newVal, oldVal)
+      //     },
+      //     (newVal, oldVal) => {
+      //       console.log(newVal, oldVal)
+      //     },
+      //   ]
+      // },
+      // methods: {
+      //   msgChange() {
+      //     this.msg = 'new msg'
+      //   }
+      // }
     })
 
   </script>

@@ -29,6 +29,7 @@ export function simpleNormalizeChildren (children: any) {
 // with hand-written render functions / JSX. In such cases a full normalization
 // is needed to cater to all possible types of children values.
 export function normalizeChildren (children: any): ?Array<VNode> {
+  console.log('用户手写render调用')
   return isPrimitive(children)
     ? [createTextVNode(children)]
     : Array.isArray(children)
@@ -40,6 +41,7 @@ function isTextNode (node): boolean {
   return isDef(node) && isDef(node.text) && isFalse(node.isComment)
 }
 
+// children 表示要规范的子节点
 function normalizeArrayChildren (children: any, nestedIndex?: string): Array<VNode> {
   const res = []
   let i, c, lastIndex, last
@@ -53,6 +55,7 @@ function normalizeArrayChildren (children: any, nestedIndex?: string): Array<VNo
       if (c.length > 0) {
         c = normalizeArrayChildren(c, `${nestedIndex || ''}_${i}`)
         // merge adjacent text nodes
+        // 合并文本节点
         if (isTextNode(c[0]) && isTextNode(last)) {
           res[lastIndex] = createTextVNode(last.text + (c[0]: any).text)
           c.shift()
@@ -64,8 +67,10 @@ function normalizeArrayChildren (children: any, nestedIndex?: string): Array<VNo
         // merge adjacent text nodes
         // this is necessary for SSR hydration because text nodes are
         // essentially merged when rendered to HTML strings
+        // 合并文本节点
         res[lastIndex] = createTextVNode(last.text + c)
       } else if (c !== '') {
+        // 基础类型，则通过 createTextVNode 方法转换成 VNode 类型
         // convert primitive to vnode
         res.push(createTextVNode(c))
       }
