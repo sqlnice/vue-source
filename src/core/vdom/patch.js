@@ -681,13 +681,12 @@ export function createPatchFunction (backend) {
       return node.nodeType === (vnode.isComment ? 8 : 3)
     }
   }
-
+  // hydrating 表示是否是服务端渲染
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
     }
-
     let isInitialPatch = false
     const insertedVnodeQueue = []
 
@@ -709,6 +708,7 @@ export function createPatchFunction (backend) {
             oldVnode.removeAttribute(SSR_ATTR)
             hydrating = true
           }
+          // 服务端渲染
           if (isTrue(hydrating)) {
             if (hydrate(oldVnode, vnode, insertedVnodeQueue)) {
               invokeInsertHook(vnode, insertedVnodeQueue, true)
@@ -725,6 +725,7 @@ export function createPatchFunction (backend) {
           }
           // either not server-rendered, or hydration failed.
           // create an empty node and replace it
+          // 创建一个VNode节点
           oldVnode = emptyNodeAt(oldVnode)
         }
 
