@@ -38,6 +38,7 @@ export function initMixin (Vue: Class<Component>) {
       initInternalComponent(vm, options)
     } else {
       // 得到 Vue.otpions 对象
+      // 把 Vue 的 options 和用户传入的 options 做合并处理
       vm.$options = mergeOptions(
         resolveConstructorOptions(vm.constructor),
         options || {},

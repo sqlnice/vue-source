@@ -109,10 +109,23 @@ export function createComponent (
     return
   }
 
+  // 根实例
+  // 在 initGlobalAPI 中定义的 Vue.options._base = Vue
   const baseCtor = context.$options._base
 
-  // plain options object: turn it into a constructor
+  // createComponent
+  // 因为我们这样引用组件，所以为一个Object
+  // export default {
+  //   name: 'app',
+  //   components: {
+  //     HelloWorld
+  //   }
+  // }
   if (isObject(Ctor)) {
+    // 一：
+    // 通过 Vue 的 extend 方法，生成子类构造函数，使得子类也有Vue根实例的一些方法
+    // 其实就是构造Vue的子类
+    // src/core/global-api/extend.js
     Ctor = baseCtor.extend(Ctor)
   }
 
@@ -125,7 +138,7 @@ export function createComponent (
     return
   }
 
-  // async component
+  // 异步组件
   let asyncFactory
   if (isUndef(Ctor.cid)) {
     asyncFactory = Ctor
@@ -146,8 +159,8 @@ export function createComponent (
 
   data = data || {}
 
-  // resolve constructor options in case global mixins are applied after
-  // component constructor creation
+  // 解析构造函数选项，如果全局混合后应用
+  // 创建组件构造函数
   resolveConstructorOptions(Ctor)
 
   // transform component v-model data into props & events
@@ -158,7 +171,7 @@ export function createComponent (
   // extract props
   const propsData = extractPropsFromVNodeData(data, Ctor, tag)
 
-  // functional component
+  // 函数式组件
   if (isTrue(Ctor.options.functional)) {
     return createFunctionalComponent(Ctor, propsData, data, context, children)
   }
@@ -182,10 +195,11 @@ export function createComponent (
     }
   }
 
-  // install component management hooks onto the placeholder node
+  // 二：安装组件钩子函数
   installComponentHooks(data)
 
   // return a placeholder vnode
+  // 三：实例化VNode并返回。需要注意组件vnode没有children，这点在之后的patch在分析。
   const name = Ctor.options.name || tag
   const vnode = new VNode(
     `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
@@ -193,7 +207,6 @@ export function createComponent (
     { Ctor, propsData, listeners, tag, children },
     asyncFactory
   )
-
   // Weex specific: invoke recycle-list optimized @render function for
   // extracting cell-slot template.
   // https://github.com/Hanks10100/weex-native-directive/tree/master/component
@@ -223,6 +236,8 @@ export function createComponentInstanceForVnode (
   return new vnode.componentOptions.Ctor(options)
 }
 
+// 把componentVNodeHooks的钩子函数合并到data.hook里，在VNode执行patch过程中执行相关钩子函数。
+// 注意：合并过程中如果已经存在，那么执行mergeHook返回一个merged函数，最终执行的时候，依次执行这两个钩子函数
 function installComponentHooks (data: VNodeData) {
   const hooks = data.hook || (data.hook = {})
   for (let i = 0; i < hooksToMerge.length; i++) {

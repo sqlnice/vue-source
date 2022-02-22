@@ -22,6 +22,7 @@ export function initExtend (Vue: GlobalAPI) {
     const SuperId = Super.cid
     const cachedCtors = extendOptions._Ctor || (extendOptions._Ctor = {})
     if (cachedCtors[SuperId]) {
+      // 读取缓存里的
       return cachedCtors[SuperId]
     }
 
@@ -30,12 +31,14 @@ export function initExtend (Vue: GlobalAPI) {
       validateComponentName(name)
     }
 
+    // Vue实例的初始化逻辑，初始化的同时添加全局api
     const Sub = function VueComponent (options) {
       this._init(options)
     }
     Sub.prototype = Object.create(Super.prototype)
     Sub.prototype.constructor = Sub
     Sub.cid = cid++
+    // 扩展options
     Sub.options = mergeOptions(
       Super.options,
       extendOptions
@@ -45,6 +48,7 @@ export function initExtend (Vue: GlobalAPI) {
     // For props and computed properties, we define the proxy getters on
     // the Vue instances at extension time, on the extended prototype. This
     // avoids Object.defineProperty calls for each instance created.
+    // 对 props 和 computed 初始化
     if (Sub.options.props) {
       initProps(Sub)
     }
@@ -52,7 +56,7 @@ export function initExtend (Vue: GlobalAPI) {
       initComputed(Sub)
     }
 
-    // allow further extension/mixin/plugin usage
+    // 允许进一步使用扩展/mixin/插件
     Sub.extend = Super.extend
     Sub.mixin = Super.mixin
     Sub.use = Super.use
@@ -74,7 +78,7 @@ export function initExtend (Vue: GlobalAPI) {
     Sub.extendOptions = extendOptions
     Sub.sealedOptions = extend({}, Sub.options)
 
-    // cache constructor
+    // 缓存起来
     cachedCtors[SuperId] = Sub
     return Sub
   }

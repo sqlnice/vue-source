@@ -137,6 +137,11 @@ export function _createElement (
     }
   } else {
     // direct component options / constructor
+    // 组件/构造函数的方式
+    // tag: {
+    //   data: ƒ data(),
+    //   template: "<div> {{ msg }}</div>"
+    // }
     vnode = createComponent(tag, data, context, children)
   }
   if (Array.isArray(vnode)) {
