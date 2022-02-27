@@ -106,7 +106,9 @@ export function initInternalComponent (vm: Component, options: InternalComponent
   const opts = vm.$options = Object.create(vm.constructor.options)
   // doing this because it's faster than dynamic enumeration.
   const parentVnode = options._parentVnode
+  // 父实例
   opts.parent = options.parent
+  // 父 VNode
   opts._parentVnode = parentVnode
 
   const vnodeComponentOptions = parentVnode.componentOptions
