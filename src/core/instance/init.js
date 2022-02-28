@@ -30,13 +30,14 @@ export function initMixin (Vue: Class<Component>) {
 
     // 标识符，防止被数据观察处理
     vm._isVue = true
-    // 合并配置
     if (options && options._isComponent) {
+      // 组件调用 - 合并配置
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
+      // 外部调用 - 合并配置
       // 得到 Vue.otpions 对象
       // 把 Vue 的 options 和用户传入的 options 做合并处理
       vm.$options = mergeOptions(
