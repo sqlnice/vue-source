@@ -6,7 +6,7 @@ import Vue from "vue";
 //   render: (h) => h(App),
 // });
 let childComp = {
-  template: "<div>{{msg}}</div>",
+  template: "<div>{{msg}}<Test><Test/></div>",
   created() {
     console.log("child created");
   },
