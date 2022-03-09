@@ -34,7 +34,7 @@ import App from "./App.vue";
 //   // 则使用加载失败时使用的组件。默认值是：`Infinity`
 //   timeout: 3000,
 // });
-Vue.component("async-example", AsyncComponent);
+// Vue.component("async-example", AsyncComponent);
 new Vue({
   el: "#app",
   render: (h) => h(App),
