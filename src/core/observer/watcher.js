@@ -68,10 +68,10 @@ export default class Watcher {
     this.id = ++uid // uid for batching
     this.active = true
     this.dirty = this.computed // for computed watchers
-    this.deps = []
-    this.newDeps = []
-    this.depIds = new Set()
-    this.newDepIds = new Set()
+    this.deps = [] // 表示 Watcher 实例持有的 Dep 实例的数组
+    this.newDeps = [] // 表示 Watcher 实例持有的 Dep 实例的数组
+    this.depIds = new Set() // 表示上面数组的 id
+    this.newDepIds = new Set() // 表示上面数组的 id
     this.expression = process.env.NODE_ENV !== 'production'
       ? expOrFn.toString()
       : ''
@@ -100,6 +100,7 @@ export default class Watcher {
 
   /**
    * Evaluate the getter, and re-collect dependencies.
+   * 求值，并重新收集依赖
    */
   get () {
     pushTarget(this)
@@ -117,6 +118,7 @@ export default class Watcher {
       // "touch" every property so they are all tracked as
       // dependencies for deep watching
       if (this.deep) {
+        // 递归访问 value
         traverse(value)
       }
       popTarget()
@@ -127,6 +129,7 @@ export default class Watcher {
 
   /**
    * Add a dependency to this directive.
+   * 添加依赖项
    */
   addDep (dep: Dep) {
     const id = dep.id
@@ -141,6 +144,7 @@ export default class Watcher {
 
   /**
    * Clean up for dependency collection.
+   * 清除依赖收集
    */
   cleanupDeps () {
     let i = this.deps.length
