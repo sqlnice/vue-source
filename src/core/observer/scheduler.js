@@ -22,6 +22,7 @@ let index = 0
 
 /**
  * Reset the scheduler's state.
+ * 把控制流程状态的一些变量恢复到初始值，把 watcher 队列清空
  */
 function resetSchedulerState () {
   index = queue.length = activatedChildren.length = 0
@@ -47,10 +48,14 @@ function flushSchedulerQueue () {
   //    user watchers are created before the render watcher)
   // 3. If a component is destroyed during a parent component's watcher run,
   //    its watchers can be skipped.
+  // 1.组件的更新由父到子：因为父组件的创建过程是先于子组件的。所以 watcher 的创建也是先子后父，执行顺序也是先子后父
+  // 2.用户自定义的 watcher 要优于 渲染 watcher 执行：因为用户自定义的 watcher 是在渲染 watcher 之前创建的
+  // 3.如果一个组件在父组件的 watcher 执行期间被销毁，那么它对应的 watcher 执行可以被跳过
   queue.sort((a, b) => a.id - b.id)
 
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
+  // 每次遍历都会求一次 queue 的长度，因为在 watcher.run() 时，有可能用户会添加新的 watcher
   for (index = 0; index < queue.length; index++) {
     watcher = queue[index]
     if (watcher.before) {
@@ -79,7 +84,7 @@ function flushSchedulerQueue () {
   // keep copies of post queues before resetting state
   const activatedQueue = activatedChildren.slice()
   const updatedQueue = queue.slice()
-
+  // 状态恢复
   resetSchedulerState()
 
   // call component updated and activated hooks
