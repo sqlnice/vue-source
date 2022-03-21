@@ -1,18 +1,39 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld />
-    <!-- <async-webpack-example></async-webpack-example> -->
+    <br />
+    {{ name }}
+    <br />
+    <button @click="change">change</button>
+    <button @click="changeLast">change last name</button>
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
-
 export default {
   name: "App",
-  components: {
-    HelloWorld,
+  data() {
+    return {
+      firstName: "SHI",
+      lastName: "QI",
+      useless: 0,
+    };
+  },
+  computed: {
+    name() {
+      if (this.useless > 0) {
+        return this.firstName + this.lastName;
+      }
+      return "please click change";
+    },
+  },
+  methods: {
+    change() {
+      this.useless++;
+    },
+    changeLast() {
+      this.lastName = "QILONG";
+    },
   },
 };
 </script>
