@@ -2,7 +2,7 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
     <br />
-    {{ name }}
+    {{ fullName }}
     <br />
     <button @click="change">change</button>
     <button @click="changeLast">change last name</button>
@@ -20,11 +20,8 @@ export default {
     };
   },
   computed: {
-    name() {
-      if (this.useless > 0) {
-        return this.firstName + this.lastName;
-      }
-      return "please click change";
+    fullName() {
+      return this.firstName + this.lastName;
     },
   },
   methods: {

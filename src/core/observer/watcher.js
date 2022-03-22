@@ -250,6 +250,8 @@ export default class Watcher {
 
   /**
    * Depend on this watcher. Only for computed property watchers.
+   * 仅适用于 computed watchers
+   * 此时 Dep.target 是渲染 Watcher
    */
   depend () {
     if (this.dep && Dep.target) {

@@ -192,6 +192,7 @@ function initComputed (vm: Component, computed: Object) {
     if (!isSSR) {
       // create internal watcher for the computed property.
       // 为每一个key创建Watcher实例
+      // 此时 watcher 的 getter 为 fullName () { return this.firstName + ' ' + this.lastName }，但是不会立即求值，并且实例化一个 Dep
       watchers[key] = new Watcher(
         vm,
         getter || noop,
