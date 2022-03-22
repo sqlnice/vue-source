@@ -24,6 +24,18 @@ export default {
       return this.firstName + this.lastName;
     },
   },
+  watch: {
+    // fullName(val, oldVal) {
+    //   console.log(val, oldVal);
+    // },
+    fullName: {
+      handler(val, oldVal) {
+        console.log(val, oldVal);
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
   methods: {
     change() {
       this.useless++;
