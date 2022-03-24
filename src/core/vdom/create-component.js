@@ -53,6 +53,7 @@ const componentVNodeHooks = {
   },
 
   prepatch (oldVnode: MountedComponentVNode, vnode: MountedComponentVNode) {
+    // 组件更新：拿到新的 vnode 的组件配置以及组件实例，去执行 updateChildComponent
     const options = vnode.componentOptions
     const child = vnode.componentInstance = oldVnode.componentInstance
     updateChildComponent(
