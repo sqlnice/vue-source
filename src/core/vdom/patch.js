@@ -574,6 +574,7 @@ export function createPatchFunction (backend) {
       // 如果是文本节点并且不相同，则直接替换
       nodeOps.setTextContent(elm, vnode.text)
     }
+    // 4. 执行 postpatch 钩子函数
     if (isDef(data)) {
       if (isDef(i = data.hook) && isDef(i = i.postpatch)) i(oldVnode, vnode)
     }

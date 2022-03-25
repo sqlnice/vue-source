@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <br />
-    {{ fullName }}
-    <br />
+    <div>
+      <ul>
+        <li v-for="item in items" :key="item.id">{{ item.val }}</li>
+      </ul>
+    </div>
     <button @click="change">change</button>
-    <button @click="changeLast">change last name</button>
   </div>
 </template>
 
@@ -14,34 +14,17 @@ export default {
   name: "App",
   data() {
     return {
-      firstName: "SHI",
-      lastName: "QI",
-      useless: 0,
+      items: [
+        { id: 0, val: "A" },
+        { id: 1, val: "B" },
+        { id: 2, val: "C" },
+        { id: 3, val: "D" },
+      ],
     };
-  },
-  computed: {
-    fullName() {
-      return this.firstName + this.lastName;
-    },
-  },
-  watch: {
-    // fullName(val, oldVal) {
-    //   console.log(val, oldVal);
-    // },
-    fullName: {
-      handler(val, oldVal) {
-        console.log(val, oldVal);
-      },
-      deep: true,
-      immediate: true,
-    },
   },
   methods: {
     change() {
-      this.useless++;
-    },
-    changeLast() {
-      this.lastName = "QILONG";
+      this.items.reverse().push({ id: 4, val: "E" });
     },
   },
 };
