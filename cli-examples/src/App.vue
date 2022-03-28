@@ -1,10 +1,8 @@
 <template>
   <div id="app">
-    <div>
-      <ul>
-        <li v-for="item in items" :key="item.id">{{ item.val }}</li>
-      </ul>
-    </div>
+    <ul>
+      <li v-for="item in items" :key="item.id">{{ item.val }}</li>
+    </ul>
     <button @click="change">change</button>
   </div>
 </template>
